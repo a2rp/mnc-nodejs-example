@@ -1,16 +1,17 @@
-<%- include('layout.ejs'); %>
-<div class="container">
-    <div class="row justify-content-center">
-
-        <h3>My name is <%= user.name %> </h3> &nbsp;
-        <h3>I stay at <%= user.location %> </h3> <br>
-
-    </div>
-</div>
-<div>
-    <a href="/logout"> <button type="submit" class="btn btn-primary btn-lg btn-block login-button">Logout</button> </a>
-</div>
-
+<%- include("layout.ejs", { pageTitle: "Your dashboard" }) %>
+<main class="page">
+    <section class="card" aria-labelledby="page-title">
+        <h1 id="page-title">Your dashboard</h1>
+        <p class="intro">You are signed in to your account.</p>
+        <div class="dashboard-data">
+            <div><strong>Name:</strong> <%= user.name %></div>
+            <div><strong>Email:</strong> <%= user.email %></div>
+            <div><strong>Location:</strong> <%= user.location || "Not provided" %></div>
+        </div>
+        <form method="post" action="/logout">
+            <button type="submit">Sign out</button>
+        </form>
+    </section>
+</main>
 </body>
-
 </html>

@@ -1,48 +1,29 @@
-<%- include('layout.ejs'); %>
-<div class="container">
-<div class="row justify-content-center">
-                    <div class="col-md-8">
-                        <h2>NODE.JS MVC</h2>  
-                        <div class="card">
-                            <div class="card-header">Login</div>
-                            <div class="card-body">
+<%- include("layout.ejs", { pageTitle: "Sign in" }) %>
+<main class="page">
+    <section class="card" aria-labelledby="page-title">
+        <h1 id="page-title">Sign in</h1>
+        <p class="intro">Use your account details to open your private dashboard.</p>
 
-                                <form class="form-horizontal" method="post" action="/login">
+        <% if (typeof success !== "undefined" && success) { %>
+            <div class="alert success" role="status"><%= success %></div>
+        <% } %>
+        <% if (typeof error !== "undefined" && error) { %>
+            <div class="alert error" role="alert"><%= error %></div>
+        <% } %>
 
-                                
-                                    <div class="form-group">
-                                        <label for="email" class="cols-sm-2 control-label">Your Email</label>
-                                        <div class="cols-sm-10">
-                                            <div class="input-group">
-                                                <span class="input-group-addon"><i class="fa fa-envelope fa" aria-hidden="true"></i></span>
-                                                <input type="text" class="form-control" name="email" id="email" placeholder="Enter your Email" />
-                                            </div>
-                                        </div>
-                                    </div>
-                                    
-                                    <div class="form-group">
-                                        <label for="password" class="cols-sm-2 control-label">Password</label>
-                                        <div class="cols-sm-10">
-                                            <div class="input-group">
-                                                <span class="input-group-addon"><i class="fa fa-lock fa-lg" aria-hidden="true"></i></span>
-                                                <input type="password" class="form-control" name="password" id="password" placeholder="Enter your Password" />
-                                            </div>
-                                        </div>
-                                    </div>
-                                    
-                                    <div class="form-group ">
-                                        <button type="submit" class="btn btn-primary btn-lg btn-block login-button">Login</button>
-                                    </div>
-                                    <div class="login-register">
-                                        <a href="/register">Register</a>
-                                    </div>
-                                </form>
-                            </div>
-
-                        </div>
-                    </div>
-                </div>
-</div>
-
+        <form method="post" action="/login">
+            <div class="field">
+                <label for="email">Email</label>
+                <input id="email" name="email" type="email" autocomplete="username" maxlength="254" required>
+            </div>
+            <div class="field">
+                <label for="password">Password</label>
+                <input id="password" name="password" type="password" autocomplete="current-password" maxlength="72" required>
+            </div>
+            <button type="submit">Sign in</button>
+        </form>
+        <p class="links">New here? <a href="/register">Create an account</a></p>
+    </section>
+</main>
 </body>
 </html>

@@ -1,49 +1,40 @@
 const bcrypt = require("bcryptjs");
-LocalStrategy = require("passport-local").Strategy;
-
-//Load model
-
+const LocalStrategy = require("passport-local").Strategy;
 const User = require("../models/User");
 
-const loginCheck = passport => {
-    passport.use(
-        new LocalStrategy({ usernameField: "email" }, (email, password, done) => {
-            //Check customer
+const loginCheck = (passport) => {
+    passport.use(new LocalStrategy(
+        { usernameField: "email" },
+        async (email, password, done) => {
+            if (typeof email !== "string" || typeof password !== "string") {
+                return done(null, false);
+            }
+            if (Buffer.byteLength(password, "utf8") > 72) return done(null, false);
 
-            User.findOne({ email: email })
-                .then((user) => {
-                    if (!user) {
-                        console.log("wrong email");
-                        return done();
-                    }
+            try {
+                const user = await User.findOne({
+                    email: email.trim().toLowerCase(),
+                }).select("+password");
 
-                    //Match Password
+                if (!user || !(await bcrypt.compare(password, user.password))) {
+                    return done(null, false);
+                }
+                return done(null, user);
+            } catch (error) {
+                return done(error);
+            }
+        }
+    ));
 
-                    bcrypt.compare(password, user.password, (error, isMatch) => {
-                        if (error) throw error;
-                        if (isMatch) {
-                            return done(null, user);
-                        } else {
-                            console.log("Wrong password");
-                            return done();
-                        }
-                    });
-                })
-                .catch((error) => console.log(error));
-        })
-    );
-
-    passport.serializeUser((user, done) => {
-        done(null, user.id);
-    });
-
-    passport.deserializeUser((id, done) => {
-        User.findById(id, (error, user) => {
-            done(error, user);
-        });
+    passport.serializeUser((user, done) => done(null, user.id));
+    passport.deserializeUser(async (id, done) => {
+        try {
+            const user = await User.findById(id).select("-password");
+            return done(null, user || false);
+        } catch (error) {
+            return done(error);
+        }
     });
 };
 
-module.exports = {
-    loginCheck,
-};
+module.exports = { loginCheck };
